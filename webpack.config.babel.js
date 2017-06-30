@@ -16,7 +16,7 @@ const isProd = ENV === 'build' || process.env.NODE_ENV == 'production';
 
 const client = `${__dirname}/client`;
 const clientHost = process.env.HOST || '127.0.0.1';
-const clientPort = process.env.PORT || 8083;
+const clientPort = process.env.PORT || 8081;
 
 function resolve(dir) {
 	return path.join(__dirname, dir);
@@ -62,7 +62,10 @@ module.exports = (() => {
 			},
 			{
 				test: /\.less$/,
-				use: ExtractTextPlugin.extract(['css-loader', 'less-loader'])
+				use: ExtractTextPlugin.extract({
+					fallback: 'style-loader',
+					use: ['css-loader', 'less-loader']
+				})
 			},
 			{
 				test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
@@ -87,7 +90,8 @@ module.exports = (() => {
 	};
 
 	config.entry = {
-		'app': `${client}/js/app.js`
+		'1.vendor': `${client}/js/vendor.js`,
+		'2.app': `${client}/js/app.js`
 	};
 
 	config.resolve = {
@@ -128,7 +132,17 @@ module.exports = (() => {
 		}),
 		new HtmlWebpackPlugin({
 			template: `!!html-loader!${client}/index.html`,
-			inject: 'body'
+			inject: 'body',
+			chunksSortMode: (a, b) => {
+				// alphabetical order
+				if (a.names[0] > b.names[0]) {
+					return 1;
+				}
+				if (a.names[0] < b.names[0]) {
+					return -1;
+				}
+				return 0;
+			}
 		}),
 		new ExtractTextPlugin({ filename: '[name].[chunkhash].bundle.css', disable: !isProd }),
 		new FriendlyErrorsPlugin()

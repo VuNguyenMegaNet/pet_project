@@ -8,6 +8,15 @@
 	"parserOptions": {
 		"sourceType": "module"
 	},
+	"globals": {
+		"window": true,
+		"define": true,
+		"jquery": true,
+		"$": true,
+		"lodash": true,
+		"_": true,
+		"moment": true
+	},
 	"rules": {
 		"no-plusplus": 0,
 		"no-var": 1,

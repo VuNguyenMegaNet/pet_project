@@ -1,9 +1,17 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import Home from './../components/Home';
-import Portfolio from './../components/portfolio/Portfolio';
-import Stocks from './../components/stocks/Stocks';
+const Home = (resolve) => {
+	require(['./../components/Home'], resolve);
+};
+
+const Portfolio = (resolve) => {
+	require(['./../components/portfolio/Portfolio'], resolve);
+};
+
+const Stocks = (resolve) => {
+	require(['./../components/stocks/Stocks'], resolve);
+};
 
 Vue.use(VueRouter);
 
@@ -12,7 +20,10 @@ export default new VueRouter({
 	routes: [
 		{
 			path: '/',
-			component: Home
+			component: Home,
+			beforeEnter: (to, from, next) => {
+				next();
+			}
 		},
 		{
 			path: '/portfolio',
