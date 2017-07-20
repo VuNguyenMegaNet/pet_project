@@ -39,7 +39,6 @@ module.exports = (() => {
 			},
 			{
 				test: /\.vue$/,
-				exclude: /node_modules/,
 				loader: 'vue-loader'
 			},
 			{
@@ -171,7 +170,9 @@ module.exports = (() => {
 		open: true,
 		port: clientPort,
 		host: clientHost,
-		stats: 'verbose'
+		stats: 'verbose',
+		openPage: '',
+		historyApiFallback: true
 	};
 
 	return config;

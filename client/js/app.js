@@ -2,14 +2,18 @@ require('assets/styles/main.less');
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
-import store from './store/store';
+import store from './stores/store';
 import axios from 'axios';
+import authInterceptor from './stores/factories/auth-interceptors';
 
 const http = axios.create({
-	baseURL: 'https://http-vuejs-13b28.firebaseio.com/'
+	// baseURL: 'https://vuejs-shopping-cart.firebaseio.com/'
+	baseURL: 'http://localhost:3000/'
 });
 
 Vue.prototype.$http = http;
+Vue.prototype.$http.defaults.withCredentials = true;
+authInterceptor();
 
 Vue.filter('currency', (value) => {
 	return `$ ${value.toLocaleString()}`;

@@ -1,69 +1,66 @@
 <template>
-	<nav class="navbar navbar-default">
-		<div class="container-fluid">
+	<nav class="navbar navbar-inverse" role="navigation">
+		<div class="container">
 			<div class="navbar-header">
-				<router-link to="/" class="navbar-brand">Stock Trader</router-link>
+				<router-link to="/" class="navbar-brand">Online Store</router-link>
 			</div>
 
-			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				<ul class="nav navbar-nav">
-					<router-link to="/portfolio" activeClass="active" tag="li"><a>Portfolio</a></router-link>
-					<router-link to="/stocks" activeClass="active" tag="li"><a>Stocks</a></router-link>
-				</ul>
-				<strong class="navbar-text navbar-right">Funds: {{ funds | currency }}</strong>
-				<ul class="nav navbar-nav navbar-right">
-					<li><a href="#" @click="endDay">End Day</a></li>
-					<li class="dropdown" :class="{open: isDropdownOpen}" @click="isDropdownOpen = !isDropdownOpen">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Save & Load <span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a href="#" @click="saveData">Save Data</a></li>
-							<li><a href="#" @click="loadData">Load Data</a></li>
-						</ul>
-					</li>
-				</ul>
-			</div>
+			<ul class="nav navbar-nav navbar-right">
+				<router-link to="/login" tag="li"><a>Login</a></router-link>
+				<li class="li-pointer" @click.prevent="logoutLocal"><a>Logout</a></li>
+				<router-link to="/register" tag="li"><a>Register</a></router-link>
+				<li>
+					<router-link to="/cart" class="btn btn-success navbar-btn" tag="button">
+						Checkout <span class="badge">{{ numItems }} ({{ cartValueLocal | currency }})</span>
+					</router-link>
+				</li>
+			</ul>
 		</div>
+		<div style="display: none">{{ isLogout }}</div>
 	</nav>
 </template>
 
 <script>
-	import { mapActions, mapGetters } from 'vuex';
+	import { mapActions } from 'vuex';
 	export default {
-		data() {
-			return {
-				isDropdownOpen: false
-			};
-		},
 		computed: {
-			funds() {
-				return this.$store.getters.funds;
+			numItems() {
+				let res = 0;
+				this.$store.getters.cartItemList.map((item, idx) => {
+					res += item.quantity;
+				});
+				return res;
 			},
-			...mapGetters([
-				'stockPortfolio',
-				'stocks'
-			])
+			cartValueLocal() {
+				return this.$store.getters.cartValue;
+			},
+			isLogout() {
+				if (!this.$store.getters.isAuthenticated) {
+					return this.$router.push({ path: '/login' });
+				}
+			}
 		},
 		methods: {
-			...mapActions({
-				'randomizeStocks': 'randomizeStocks',
-				'fetchData': 'loadData'
-			}),
-			endDay() {
-				this.randomizeStocks();
-			},
-			saveData() {
-				const data = {
-					funds: this.funds,
-					stockPortfolio: this.stockPortfolio,
-					stocks: this.stocks
-				};
-
-				this.$http.put('data.json', data);
-			},
-			loadData() {
-				this.fetchData();
+			...mapActions(['logout']),
+			logoutLocal() {
+				this.logout();
+				window.localStorage.clear();
 			}
 		}
 	};
 
 </script>
+
+<style scoped>
+	.navbar-btn a {
+		color: white;
+	}
+
+	.li-pointer {
+		cursor: pointer;
+	}
+
+	.li-pointer:hover {
+		cursor: pointer;
+	}
+</style>
